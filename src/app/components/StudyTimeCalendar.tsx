@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { createClient, PostgrestError } from "@supabase/supabase-js";
 
 // Supabase設定
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
@@ -83,10 +83,13 @@ export default function StudyTimeCalendar() {
         });
         setStudyData(formattedData);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("データの読み込みに失敗しました:", error);
-      setError(`データの読み込みに失敗しました: ${error.message}`);
-      // フォールバック：localStorage から読み込み
+      if (error instanceof Error) {
+        setError(`データの読み込みに失敗しました: ${error.message}`);
+      } else {
+        setError("データの読み込みに失敗しました");
+      }
       loadDataFromStorage();
     } finally {
       setLoading(false);
@@ -116,9 +119,13 @@ export default function StudyTimeCalendar() {
       if (error) {
         throw error;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("データの保存に失敗しました:", error);
-      setError(`データの保存に失敗しました: ${error.message}`);
+      if (error instanceof Error) {
+        setError(`データの保存に失敗しました: ${error.message}`);
+      } else {
+        setError("データの保存に失敗しました");
+      }
       // フォールバック：localStorage に保存
       saveDataToStorage({ ...studyData, [date]: studyTime });
       throw error;
@@ -138,9 +145,13 @@ export default function StudyTimeCalendar() {
       if (error) {
         throw error;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("データの削除に失敗しました:", error);
-      setError(`データの削除に失敗しました: ${error.message}`);
+      if (error instanceof Error) {
+        setError(`データの削除に失敗しました: ${error.message}`);
+      } else {
+        setError("データの削除に失敗しました");
+      }
       throw error;
     }
   };
@@ -345,6 +356,7 @@ export default function StudyTimeCalendar() {
         setSelectedDate(null);
       } catch (error) {
         // エラーは既にsetErrorで設定されている
+        console.error("Error:", error);
       }
     }
   };
@@ -369,6 +381,7 @@ export default function StudyTimeCalendar() {
         closeEditModal();
       } catch (error) {
         // エラーは既にsetErrorで設定されている
+        console.error("Error:", error);
       }
     }
   };
@@ -389,6 +402,7 @@ export default function StudyTimeCalendar() {
         closeEditModal();
       } catch (error) {
         // エラーは既にsetErrorで設定されている
+        console.error("Error:", error);
       }
     }
   };
