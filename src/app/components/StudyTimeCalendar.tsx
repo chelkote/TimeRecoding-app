@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { createClient, PostgrestError } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 // Supabase設定
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
